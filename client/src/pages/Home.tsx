@@ -2,7 +2,7 @@ import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { RotateCcw, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 /**
@@ -18,7 +18,6 @@ export default function Home() {
     coupons,
     result,
     updateCouponPrice,
-    resetToDefaults,
   } = useAuctionCalculator();
 
   const updateSalePrice = (value: number) => setSalePrice(value);
@@ -103,7 +102,7 @@ export default function Home() {
               {/* VIP 服務 */}
               <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 text-lg">👤</span>
+                  <span className="text-emerald-400 text-lg">👑</span>
                   <div>
                     <div className="text-gray-300 text-sm font-medium">VIP 服務</div>
                     <div className="text-gray-500 text-xs">手續費 5%</div>
@@ -139,15 +138,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 重置按鈕 */}
-              <Button
-                onClick={resetToDefaults}
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 rounded-lg h-10"
-                variant="ghost"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                重置為預設值
-              </Button>
+
             </div>
           </div>
 
