@@ -120,7 +120,9 @@ export default function Home() {
                   {coupons.map((coupon) => (
                     <div key={coupon.id}>
                       <label className="block text-gray-400 text-xs mb-2">
-                        {coupon.name}={formatToE(coupon.price)}
+                        {coupon.id === 'coupon30' && '30% 折扣券（手續費減免 30%）'}
+                        {coupon.id === 'coupon50' && '50% 折扣券（手續費減免 50%）'}
+                        {coupon.id === 'coupon100' && '100% 折扣券（手續費全免）'}
                       </label>
                       <div className="relative">
                         <Input
