@@ -145,15 +145,24 @@ export function useAuctionCalculator() {
  * 1E = 100,000,000
  * 1kw = 10,000,000
  * 1w = 1,000,000
- * 例如：45 → "45.00E", 0.55 → "5.50kw", 0.0094 → "94.00w"
+ * 小數點後全為 0 則不顯示
+ * 例如：45 → "45E", 0.55 → "5.5kw", 0.0094 → "94w", 0.064 → "640w"
  */
 export function formatToE(num: number): string {
+  let formatted: string;
+  
   if (num >= 1) {
-    return `${num.toFixed(2)}E`;
+    formatted = num.toFixed(2);
+    formatted = formatted.replace(/\.?0+$/, '');
+    return `${formatted}E`;
   } else if (num >= 0.1) {
-    return `${(num * 10).toFixed(2)}kw`;
+    formatted = (num * 10).toFixed(2);
+    formatted = formatted.replace(/\.?0+$/, '');
+    return `${formatted}kw`;
   } else {
-    return `${(num * 100).toFixed(2)}w`;
+    formatted = (num * 100).toFixed(2);
+    formatted = formatted.replace(/\.?0+$/, '');
+    return `${formatted}w`;
   }
 }
 
