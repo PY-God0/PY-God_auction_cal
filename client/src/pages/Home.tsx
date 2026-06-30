@@ -106,7 +106,7 @@ export default function Home() {
               {/* VIP 服務 */}
               <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 text-lg">{vipEnabled ? '♔' : '👤'}</span>
+                  <span className="text-emerald-400 text-lg">{vipEnabled ? '♔' : '⊙'}</span>
                   <div>
                     <div className="text-gray-300 text-sm font-medium">VIP 服務</div>
                     <div className="text-gray-500 text-xs">手續費 {vipEnabled ? '4%' : '5%'}</div>
