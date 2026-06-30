@@ -1,12 +1,12 @@
-import { useAuctionCalculator, formatNumber, formatCompact } from '@/hooks/useAuctionCalculator';
+import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
 import { RotateCcw, TrendingUp } from 'lucide-react';
 
 /**
  * 拍賣場手續費折扣券計算器
  * 設計風格：玻璃擬態 (Glassmorphism)
+ * 單位：以億 (E) 為基準
  */
 export default function Home() {
   const {
@@ -21,8 +21,8 @@ export default function Home() {
   } = useAuctionCalculator();
 
   const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/,/g, '');
-    const num = parseInt(value) || 0;
+    const value = e.target.value;
+    const num = parseFloat(value) || 0;
     setSalePrice(num);
   };
 
@@ -32,7 +32,7 @@ export default function Home() {
   };
 
   const handleCouponPriceChange = (couponId: string, value: string) => {
-    const num = parseInt(value.replace(/,/g, '')) || 0;
+    const num = parseFloat(value) || 0;
     updateCouponPrice(couponId, num);
   };
 
@@ -42,7 +42,7 @@ export default function Home() {
         {/* 標題 */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">拍賣場手續費計算器</h1>
-          <p className="text-white/60">優化您的折扣券使用策略，最大化收益</p>
+          <p className="text-white/60">優化您的折扣券使用策略，最大化收益（單位：億 E）</p>
         </div>
 
         {/* 主容器 */}
@@ -61,16 +61,18 @@ export default function Home() {
             {/* 售價輸入 */}
             <div className="mb-6">
               <label className="block text-white/80 text-sm font-semibold mb-2">
-                售出價格
+                售出價格 (E)
               </label>
               <Input
-                type="text"
-                value={formatNumber(salePrice)}
+                type="number"
+                value={salePrice}
                 onChange={handleSalePriceChange}
+                step="0.01"
                 className="w-full bg-white/10 border-white/20 text-white placeholder-white/40"
+                placeholder="例如：45"
               />
               <p className="text-white/50 text-xs mt-2">
-                {salePrice.toLocaleString('zh-TW')}
+                {formatToE(salePrice)}
               </p>
             </div>
 
@@ -92,17 +94,19 @@ export default function Home() {
 
             {/* 折扣券價格設置 */}
             <div className="mb-6">
-              <h3 className="text-white/80 text-sm font-semibold mb-3">折扣券價格</h3>
+              <h3 className="text-white/80 text-sm font-semibold mb-3">折扣券價格 (E)</h3>
               {coupons.map((coupon) => (
                 <div key={coupon.id} className="mb-3">
                   <label className="block text-white/60 text-xs mb-1">
                     {coupon.name} ({Math.round(coupon.discountRate * 100)}%)
                   </label>
                   <Input
-                    type="text"
-                    value={formatNumber(coupon.price)}
+                    type="number"
+                    value={coupon.price}
                     onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
+                    step="0.01"
                     className="w-full bg-white/10 border-white/20 text-white placeholder-white/40 text-sm"
+                    placeholder="例如：0.17"
                   />
                 </div>
               ))}
@@ -138,7 +142,7 @@ export default function Home() {
                 >
                   <p className="text-white/60 text-sm mb-1">原始手續費</p>
                   <p className="text-white text-lg font-semibold">
-                    {formatNumber(result.originalCommission)}
+                    {formatToE(result.originalCommission)}
                   </p>
                 </div>
                 <div
@@ -147,7 +151,7 @@ export default function Home() {
                 >
                   <p className="text-white/60 text-sm mb-1">不用折扣券收入</p>
                   <p className="text-white text-lg font-semibold">
-                    {formatNumber(result.incomeWithoutCoupon)}
+                    {formatToE(result.incomeWithoutCoupon)}
                   </p>
                 </div>
               </div>
@@ -181,7 +185,7 @@ export default function Home() {
                       <div>
                         <p className="text-white font-semibold">{coupon.couponName}</p>
                         <p className="text-white/60 text-sm">
-                          券價：{formatNumber(coupon.couponPrice)}
+                          券價：{formatToE(coupon.couponPrice)}
                         </p>
                       </div>
                       <div
@@ -192,20 +196,20 @@ export default function Home() {
                         }`}
                       >
                         {coupon.isProfit ? '+' : ''}
-                        {formatNumber(coupon.netProfitLoss)}
+                        {formatToE(coupon.netProfitLoss)}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
                         <p className="text-white/60">手續費減少</p>
                         <p className="text-white font-semibold">
-                          {formatNumber(coupon.commissionReduction)}
+                          {formatToE(coupon.commissionReduction)}
                         </p>
                       </div>
                       <div>
                         <p className="text-white/60">最終收入</p>
                         <p className="text-white font-semibold">
-                          {formatNumber(coupon.finalIncome)}
+                          {formatToE(coupon.finalIncome)}
                         </p>
                       </div>
                     </div>
@@ -234,13 +238,13 @@ export default function Home() {
                       <div>
                         <p className="text-white/60 text-sm">最終收入</p>
                         <p className="text-white text-xl font-bold">
-                          {formatNumber(result.bestStrategy.finalIncome)}
+                          {formatToE(result.bestStrategy.finalIncome)}
                         </p>
                       </div>
                       <div>
                         <p className="text-white/60 text-sm">相比無折扣增加</p>
                         <p className="text-green-300 text-xl font-bold">
-                          +{formatNumber(
+                          +{formatToE(
                             result.bestStrategy.finalIncome - result.incomeWithoutCoupon
                           )}
                         </p>
@@ -256,6 +260,7 @@ export default function Home() {
         {/* 底部說明 */}
         <div className="text-center mt-8 text-white/40 text-sm">
           <p>根據您的售價和折扣券價格自動計算最優方案</p>
+          <p className="mt-1">單位說明：1E = 1億 = 100,000,000</p>
         </div>
       </div>
     </div>

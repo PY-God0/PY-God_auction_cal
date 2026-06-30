@@ -4,14 +4,14 @@ export interface CouponOption {
   id: string;
   name: string;
   discountRate: number; // 0-1 之間的折扣率
-  price: number;
+  price: number; // 以億為單位
 }
 
 export interface CalculationResult {
-  salePrice: number;
+  salePrice: number; // 以億為單位
   commissionRate: number;
-  originalCommission: number;
-  incomeWithoutCoupon: number;
+  originalCommission: number; // 以億為單位
+  incomeWithoutCoupon: number; // 以億為單位
   coupons: CouponResult[];
   bestStrategy: CouponResult | null;
 }
@@ -19,22 +19,22 @@ export interface CalculationResult {
 export interface CouponResult {
   couponId: string;
   couponName: string;
-  couponPrice: number;
-  commissionReduction: number;
-  discountedCommission: number;
-  finalIncome: number;
-  netProfitLoss: number;
+  couponPrice: number; // 以億為單位
+  commissionReduction: number; // 以億為單位
+  discountedCommission: number; // 以億為單位
+  finalIncome: number; // 以億為單位
+  netProfitLoss: number; // 以億為單位
   isProfit: boolean;
 }
 
 const DEFAULT_COUPONS: CouponOption[] = [
-  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 16900000 },
-  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 24950000 },
-  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 55000000 },
+  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 0.17 },
+  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 0.25 },
+  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 0.57 },
 ];
 
 export function useAuctionCalculator() {
-  const [salePrice, setSalePrice] = useState<number>(1355000000);
+  const [salePrice, setSalePrice] = useState<number>(45);
   const [commissionRate, setCommissionRate] = useState<number>(0.04);
   const [coupons, setCoupons] = useState<CouponOption[]>(DEFAULT_COUPONS);
 
@@ -43,10 +43,25 @@ export function useAuctionCalculator() {
     const incomeWithoutCoupon = salePrice - originalCommission;
 
     const couponResults: CouponResult[] = coupons.map((coupon) => {
-      const commissionReduction = originalCommission * coupon.discountRate;
-      const discountedCommission = originalCommission - commissionReduction;
-      const finalIncome = salePrice - discountedCommission - coupon.price;
-      const netProfitLoss = commissionReduction - coupon.price;
+      let commissionReduction: number;
+      let discountedCommission: number;
+      let finalIncome: number;
+      let netProfitLoss: number;
+
+      if (coupon.discountRate === 1) {
+        // 100% 折扣券：直接免除所有手續費
+        commissionReduction = originalCommission;
+        discountedCommission = 0;
+        finalIncome = salePrice - coupon.price;
+        netProfitLoss = originalCommission - coupon.price;
+      } else {
+        // 30% 和 50% 折扣券
+        commissionReduction = originalCommission * coupon.discountRate;
+        discountedCommission = originalCommission * (1 - coupon.discountRate);
+        finalIncome = salePrice - discountedCommission - coupon.price;
+        netProfitLoss = commissionReduction - coupon.price;
+      }
+
       const isProfit = netProfitLoss >= 0;
 
       return {
@@ -107,7 +122,7 @@ export function useAuctionCalculator() {
   );
 
   const resetToDefaults = useCallback(() => {
-    setSalePrice(1355000000);
+    setSalePrice(45);
     setCommissionRate(0.04);
     setCoupons(DEFAULT_COUPONS);
   }, []);
@@ -123,6 +138,14 @@ export function useAuctionCalculator() {
     result,
     resetToDefaults,
   };
+}
+
+/**
+ * 格式化為了元單位 (E)
+ * 例如：45 → "45.00E"
+ */
+export function formatToE(num: number): string {
+  return `${num.toFixed(2)}E`;
 }
 
 /**
