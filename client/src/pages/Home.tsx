@@ -1,12 +1,12 @@
 import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RotateCcw, TrendingUp } from 'lucide-react';
+import { RotateCcw, TrendingUp, Settings, Moon, Sun, BookmarkPlus, Copy, Check } from 'lucide-react';
+import { useState } from 'react';
 
 /**
- * 拍賣場手續費折扣券計算器
- * 設計風格：玻璃擬態 (Glassmorphism)
- * 單位：以億 (E) 為基準
+ * PY之神 - 拍賣場手續費折扣券計算器
+ * 設計風格：專業深色主題
  */
 export default function Home() {
   const {
@@ -19,6 +19,9 @@ export default function Home() {
     result,
     resetToDefaults,
   } = useAuctionCalculator();
+
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -36,133 +39,158 @@ export default function Home() {
     updateCouponPrice(couponId, num);
   };
 
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   return (
-    <div className="min-h-screen p-4" style={{ background: 'linear-gradient(135deg, oklch(0.15 0.02 250) 0%, oklch(0.25 0.03 260) 100%)' }}>
-      <div className="max-w-6xl mx-auto">
-        {/* 版本及名稱 */}
-        <div className="flex items-center justify-start gap-3 mb-8 px-6">
-          {/* 圆角正方形圖示 */}
-          <div className="w-8 h-8 bg-cyan-500 rounded-md flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-sm">P</span>
+    <div className="min-h-screen bg-gray-950 text-white">
+      {/* 頂部導航欄 */}
+      <nav className="border-b border-gray-800 bg-gray-900/50 backdrop-blur">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* 左側：品牌標識 */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-cyan-500 rounded-md flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-sm">P</span>
+            </div>
+            <div>
+              <span className="text-white font-semibold text-sm">PY之神</span>
+              <span className="text-gray-400 text-xs ml-2">v1.0</span>
+            </div>
           </div>
-          {/* 名稱 */}
-          <span className="text-white font-semibold text-sm">PY之神</span>
-          {/* 版本標籤 */}
-          <span className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded border border-gray-600 font-mono">v1.0</span>
-        </div>
 
+          {/* 右側：功能按鈕 */}
+          <div className="flex items-center gap-4">
+            <button className="text-gray-400 hover:text-white transition-colors">
+              <Settings className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* 綠色提示條 */}
+      <div className="bg-emerald-900/30 border-b border-emerald-800/50 px-6 py-3">
+        <div className="max-w-7xl mx-auto flex items-center gap-2 text-emerald-300 text-sm">
+          <BookmarkPlus className="w-4 h-4" />
+          <span>收藏最佳折扣方案</span>
+        </div>
+      </div>
+
+      {/* 主容器 */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* 標題 */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">拍賣場手續費計算器</h1>
-          <p className="text-white/60">優化您的折扣券使用策略，最大化收益</p>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Mabi拍賣手續費計算器</h1>
+          <p className="text-gray-400 text-sm">
+            優化您的折扣券使用策略，最大化收益。輸入售價、手續費率、折扣券價格即可自動推薦最優方案。
+          </p>
         </div>
 
-        {/* 主容器 */}
+        {/* 內容區域 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 左側：輸入面板 */}
-          <div
-            className="lg:col-span-1 rounded-3xl p-6 shadow-2xl"
-            style={{
-              background: 'rgba(30, 58, 90, 0.15)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <h2 className="text-xl font-bold text-white mb-6">基本設置</h2>
+          {/* 左側面板：基本設置 */}
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <span className="text-emerald-400">≡</span>
+                基本設置
+              </h2>
 
-            {/* 售價輸入 */}
-            <div className="mb-6">
-              <label className="block text-white/80 text-sm font-semibold mb-2">
-                售出價格 (E)
-              </label>
-              <Input
-                type="number"
-                value={salePrice}
-                onChange={handleSalePriceChange}
-                step="0.01"
-                className="w-full bg-white/10 border-white/20 text-white placeholder-white/40"
-                placeholder="例如：45"
-              />
-              <p className="text-white/50 text-xs mt-2">
-                {formatToE(salePrice)}
-              </p>
-            </div>
+              {/* 售價輸入 */}
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  拍出價格 (E)
+                </label>
+                <Input
+                  type="number"
+                  value={salePrice}
+                  onChange={handleSalePriceChange}
+                  step="0.01"
+                  className="w-full bg-gray-800 border-gray-700 text-white"
+                />
+              </div>
 
-            {/* 手續費率輸入 */}
-            <div className="mb-6">
-              <label className="block text-white/80 text-sm font-semibold mb-2">
-                手續費率 (%)
-              </label>
-              <Input
-                type="number"
-                value={(commissionRate * 100).toFixed(1)}
-                onChange={handleCommissionRateChange}
-                step="0.1"
-                min="0"
-                max="100"
-                className="w-full bg-white/10 border-white/20 text-white placeholder-white/40"
-              />
-            </div>
-
-            {/* 折扣券價格設置 */}
-            <div className="mb-6">
-              <h3 className="text-white/80 text-sm font-semibold mb-3">折扣券價格 (E)</h3>
-              {coupons.map((coupon) => (
-                <div key={coupon.id} className="mb-3">
-                  <label className="block text-white/60 text-xs mb-1">
-                    {coupon.name} ({Math.round(coupon.discountRate * 100)}%)
-                  </label>
+              {/* 手續費率輸入 */}
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  VIP 等級
+                </label>
+                <div className="flex items-center gap-2">
                   <Input
                     type="number"
-                    value={coupon.price}
-                    onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
-                    step="0.01"
-                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/40 text-sm"
-                    placeholder="例如：0.17"
+                    value={(commissionRate * 100).toFixed(1)}
+                    onChange={handleCommissionRateChange}
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    className="flex-1 bg-gray-800 border-gray-700 text-white"
                   />
+                  <span className="text-gray-400 text-sm">%</span>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* 重置按鈕 */}
-            <Button
-              onClick={resetToDefaults}
-              className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl h-10"
-              variant="ghost"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              重置為預設值
-            </Button>
+              {/* 折扣券價格設置 */}
+              <div>
+                <h3 className="text-gray-300 text-sm font-medium mb-3 flex items-center gap-2">
+                  <span className="text-emerald-400">◻</span>
+                  折扣券價格 (kw)
+                </h3>
+                <div className="space-y-2">
+                  {coupons.map((coupon) => (
+                    <div key={coupon.id}>
+                      <label className="block text-gray-400 text-xs mb-1">
+                        {coupon.name}
+                      </label>
+                      <Input
+                        type="number"
+                        value={coupon.price}
+                        onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
+                        step="0.01"
+                        className="w-full bg-gray-800 border-gray-700 text-white text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 重置按鈕 */}
+              <Button
+                onClick={resetToDefaults}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 rounded-lg h-10"
+                variant="ghost"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                重置為預設值
+              </Button>
+            </div>
           </div>
 
-          {/* 右側：結果面板 */}
+          {/* 右側面板：結果 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* 原始計算結果 */}
-            <div
-              className="rounded-3xl p-6 shadow-2xl"
-              style={{
-                background: 'rgba(30, 58, 90, 0.15)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h2 className="text-xl font-bold text-white mb-4">基本計算</h2>
+            {/* 基本計算 */}
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+                <span className="text-emerald-400">◻</span>
+                基本計算
+              </h2>
               <div className="grid grid-cols-2 gap-4">
-                <div
-                  className="p-4 rounded-2xl"
-                  style={{ background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.05)' }}
-                >
-                  <p className="text-white/60 text-sm mb-1">原始手續費</p>
-                  <p className="text-white text-lg font-semibold">
+                <div className="bg-gray-800/50 rounded p-4">
+                  <p className="text-gray-400 text-sm mb-1">原始手續費</p>
+                  <p className="text-white text-2xl font-semibold">
                     {formatToE(result.originalCommission)}
                   </p>
                 </div>
-                <div
-                  className="p-4 rounded-2xl"
-                  style={{ background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.05)' }}
-                >
-                  <p className="text-white/60 text-sm mb-1">不用折扣券收入</p>
-                  <p className="text-white text-lg font-semibold">
+                <div className="bg-gray-800/50 rounded p-4">
+                  <p className="text-gray-400 text-sm mb-1">不用折扣券收入</p>
+                  <p className="text-white text-2xl font-semibold">
                     {formatToE(result.incomeWithoutCoupon)}
                   </p>
                 </div>
@@ -170,56 +198,45 @@ export default function Home() {
             </div>
 
             {/* 折扣券對比 */}
-            <div
-              className="rounded-3xl p-6 shadow-2xl"
-              style={{
-                background: 'rgba(30, 58, 90, 0.15)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h2 className="text-xl font-bold text-white mb-4">折扣券對比</h2>
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+                <span className="text-emerald-400">◻</span>
+                折扣券對比
+              </h2>
               <div className="space-y-3">
                 {result.coupons.map((coupon) => (
                   <div
                     key={coupon.couponId}
-                    className="p-4 rounded-2xl border"
-                    style={{
-                      background: coupon.isProfit
-                        ? 'rgba(34, 197, 94, 0.1)'
-                        : 'rgba(239, 68, 68, 0.1)',
-                      borderColor: coupon.isProfit
-                        ? 'rgba(34, 197, 94, 0.3)'
-                        : 'rgba(239, 68, 68, 0.3)',
-                    }}
+                    className="bg-gray-800/50 border border-gray-700 rounded p-4"
                   >
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <p className="text-white font-semibold">{coupon.couponName}</p>
-                        <p className="text-white/60 text-sm">
+                        <p className="text-white font-semibold flex items-center gap-2">
+                          <span className="text-emerald-400">◻</span>
+                          {coupon.couponName}
+                        </p>
+                        <p className="text-gray-400 text-sm">
                           券價：{formatToE(coupon.couponPrice)}
                         </p>
                       </div>
                       <div
-                        className={`px-3 py-1 rounded-lg text-sm font-semibold ${
-                          coupon.isProfit
-                            ? 'bg-green-500/20 text-green-300'
-                            : 'bg-red-500/20 text-red-300'
+                        className={`text-lg font-semibold ${
+                          coupon.isProfit ? 'text-emerald-400' : 'text-red-400'
                         }`}
                       >
                         {coupon.isProfit ? '+' : ''}
                         {formatToE(coupon.netProfitLoss)}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-white/60">手續費減少</p>
+                        <p className="text-gray-400">手續費減少</p>
                         <p className="text-white font-semibold">
                           {formatToE(coupon.commissionReduction)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-white/60">最終收入</p>
+                        <p className="text-gray-400">最終收入</p>
                         <p className="text-white font-semibold">
                           {formatToE(coupon.finalIncome)}
                         </p>
@@ -232,36 +249,23 @@ export default function Home() {
 
             {/* 最佳策略推薦 */}
             {result.bestStrategy && (
-              <div
-                className="rounded-3xl p-6 shadow-2xl border-2"
-                style={{
-                  background: 'rgba(6, 182, 212, 0.1)',
-                  borderColor: 'rgba(6, 182, 212, 0.5)',
-                }}
-              >
-                <div className="flex items-start gap-3">
-                  <TrendingUp className="w-6 h-6 text-cyan-400 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white mb-2">最佳策略推薦</h3>
-                    <p className="text-white/80 mb-3">
-                      購買 <span className="font-semibold text-cyan-300">{result.bestStrategy.couponName}</span>
+              <div className="bg-gray-900 border border-emerald-800/50 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+                  <span className="text-emerald-400">⊙</span>
+                  建議下單資訊折扣
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-800/50 rounded p-4">
+                    <p className="text-gray-400 text-sm mb-1">最終收入</p>
+                    <p className="text-white text-xl font-semibold">
+                      {formatToE(result.bestStrategy.finalIncome)}
                     </p>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-white/60 text-sm">最終收入</p>
-                        <p className="text-white text-xl font-bold">
-                          {formatToE(result.bestStrategy.finalIncome)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-white/60 text-sm">相比無折扣增加</p>
-                        <p className="text-green-300 text-xl font-bold">
-                          +{formatToE(
-                            result.bestStrategy.finalIncome - result.incomeWithoutCoupon
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                  </div>
+                  <div className="bg-gray-800/50 rounded p-4">
+                    <p className="text-gray-400 text-sm mb-1">購買折扣券</p>
+                    <p className="text-emerald-400 text-xl font-semibold">
+                      {result.bestStrategy.couponName}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -270,9 +274,10 @@ export default function Home() {
         </div>
 
         {/* 底部說明 */}
-        <div className="text-center mt-8 text-white/40 text-sm">
+        <div className="mt-12 text-center text-gray-500 text-xs space-y-1 border-t border-gray-800 pt-6">
           <p>根據您的售價和折扣券價格自動計算最優方案</p>
-          <p className="mt-1">單位：1E = 1億 | 1kw = 1000萬 | 1w = 100萬</p>
+          <p>單位：1E = 1億 | 1kw = 1000萬 | 1w = 100萬</p>
+          <p className="mt-4">© 2026 PY之神 - Mabi拍賣手續費計算器</p>
         </div>
       </div>
     </div>
