@@ -4,14 +4,14 @@ export interface CouponOption {
   id: string;
   name: string;
   discountRate: number; // 0-1 之間的折扣率
-  price: number; // 以 kw 為單位（UI 輸入單位）
+  price: number; // 以 kw 為單位
 }
 
 export interface CalculationResult {
-  salePrice: number; // 以億為單位
+  salePrice: number; // 以 kw 為單位
   commissionRate: number;
-  originalCommission: number; // 以億為單位
-  incomeWithoutCoupon: number; // 以億為單位
+  originalCommission: number; // 以 kw 為單位
+  incomeWithoutCoupon: number; // 以 kw 為單位
   coupons: CouponResult[];
   bestStrategy: CouponResult | null;
 }
@@ -19,11 +19,11 @@ export interface CalculationResult {
 export interface CouponResult {
   couponId: string;
   couponName: string;
-  couponPrice: number; // 以億為單位
-  commissionReduction: number; // 以億為單位
-  discountedCommission: number; // 以億為單位
-  finalIncome: number; // 以億為單位
-  netProfitLoss: number; // 以億為單位
+  couponPrice: number; // 以 kw 為單位
+  commissionReduction: number; // 以 kw 為單位
+  discountedCommission: number; // 以 kw 為單位
+  finalIncome: number; // 以 kw 為單位
+  netProfitLoss: number; // 以 kw 為單位
   isProfit: boolean;
 }
 
@@ -34,11 +34,17 @@ const DEFAULT_COUPONS: CouponOption[] = [
 ];
 
 export function useAuctionCalculator() {
-  const [salePrice, setSalePrice] = useState<number>(45);
+  // 輸入單位是 E，內部計算使用 kw
+  const [salePriceInE, setSalePriceInE] = useState<number>(45);
   const [commissionRate, setCommissionRate] = useState<number>(0.05); // 預設非 VIP (5%)
   const [coupons, setCoupons] = useState<CouponOption[]>(DEFAULT_COUPONS);
+  
+  // 上传給外部的 setter
+  const setSalePrice = (valueInE: number) => setSalePriceInE(valueInE);
 
   const calculate = useCallback((): CalculationResult => {
+    // 轉換为 kw 單位（E × 10 = kw）
+    const salePrice = salePriceInE * 10;
     const originalCommission = salePrice * commissionRate;
     const incomeWithoutCoupon = salePrice - originalCommission;
 
@@ -48,21 +54,20 @@ export function useAuctionCalculator() {
       let finalIncome: number;
       let netProfitLoss: number;
 
-      // 將折扣券價格從 kw 轉換為 E（kw ÷ 10 = E）
-      const couponPriceInE = coupon.price / 10;
+      // 折扣券價格已經是 kw 單位，無需轉換
 
       if (coupon.discountRate === 1) {
         // 100% 折扣券：直接免除所有手續費
         commissionReduction = originalCommission;
         discountedCommission = 0;
-        finalIncome = salePrice - couponPriceInE;
-        netProfitLoss = originalCommission - couponPriceInE;
+        finalIncome = salePrice - coupon.price;
+        netProfitLoss = originalCommission - coupon.price;
       } else {
         // 30% 和 50% 折扣券
         commissionReduction = originalCommission * coupon.discountRate;
         discountedCommission = originalCommission * (1 - coupon.discountRate);
-        finalIncome = salePrice - discountedCommission - couponPriceInE;
-        netProfitLoss = commissionReduction - couponPriceInE;
+        finalIncome = salePrice - discountedCommission - coupon.price;
+        netProfitLoss = commissionReduction - coupon.price;
       }
 
       const isProfit = netProfitLoss >= 0;
@@ -70,7 +75,7 @@ export function useAuctionCalculator() {
       return {
         couponId: coupon.id,
         couponName: coupon.name,
-        couponPrice: couponPriceInE, // 存儲轉換後的 E 單位
+        couponPrice: coupon.price, // 以 kw 為單位
         commissionReduction,
         discountedCommission,
         finalIncome,
@@ -98,7 +103,7 @@ export function useAuctionCalculator() {
       coupons: couponResults,
       bestStrategy,
     };
-  }, [salePrice, commissionRate, coupons]);
+    }, [salePriceInE, commissionRate, coupons]);
 
   const result = useMemo(() => calculate(), [calculate]);
 
@@ -125,13 +130,13 @@ export function useAuctionCalculator() {
   );
 
   const resetToDefaults = useCallback(() => {
-    setSalePrice(45);
-    setCommissionRate(0.04);
+    setSalePriceInE(45);
+    setCommissionRate(0.05);
     setCoupons(DEFAULT_COUPONS);
   }, []);
 
   return {
-    salePrice,
+    salePrice: salePriceInE, // 輸出 E 單位
     setSalePrice,
     commissionRate,
     setCommissionRate,
@@ -145,25 +150,28 @@ export function useAuctionCalculator() {
 
 /**
  * 格式化為多層級單位 (E/kw/w)
- * 1E = 100,000,000
- * 1kw = 10,000,000
- * 1w = 1,000,000
+ * 輸入單位是 kw
+ * 1E = 10kw
+ * 1kw = 10w
  * 小數點後全為 0 則不顯示
- * 例如：45 → "45E", 0.55 → "5.5kw", 0.0094 → "94w", 0.064 → "640w"
+ * 例如：450kw → "450kw", 45kw → "4.5E", 4.5kw → "4.5kw", 0.45kw → "4.5w"
  */
-export function formatToE(num: number): string {
+export function formatToE(numInKw: number): string {
   let formatted: string;
   
-  if (num >= 1) {
-    formatted = num.toFixed(2);
+  // 轉換為 E 單位（kw ÷ 10 = E）
+  const numInE = numInKw / 10;
+  
+  if (numInE >= 1) {
+    formatted = numInE.toFixed(2);
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}E`;
-  } else if (num >= 0.1) {
-    formatted = (num * 10).toFixed(2);
+  } else if (numInKw >= 1) {
+    formatted = numInKw.toFixed(2);
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}kw`;
   } else {
-    formatted = (num * 100).toFixed(2);
+    formatted = numInKw.toFixed(2);
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}w`;
   }
