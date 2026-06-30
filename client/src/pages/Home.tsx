@@ -1,7 +1,7 @@
 import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RotateCcw, TrendingUp, Square } from 'lucide-react';
+import { RotateCcw, TrendingUp } from 'lucide-react';
 
 /**
  * 拍賣場手續費折扣券計算器
@@ -40,9 +40,15 @@ export default function Home() {
     <div className="min-h-screen p-4" style={{ background: 'linear-gradient(135deg, oklch(0.15 0.02 250) 0%, oklch(0.25 0.03 260) 100%)' }}>
       <div className="max-w-6xl mx-auto">
         {/* 版本及名稱 */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <Square className="w-5 h-5 text-cyan-400" fill="currentColor" />
-          <span className="text-white font-semibold">PY之神 v1.0</span>
+        <div className="flex items-center justify-start gap-3 mb-8 px-6">
+          {/* 圆角正方形圖示 */}
+          <div className="w-8 h-8 bg-cyan-500 rounded-md flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-sm">P</span>
+          </div>
+          {/* 名稱 */}
+          <span className="text-white font-semibold text-sm">PY之神</span>
+          {/* 版本標籤 */}
+          <span className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded border border-gray-600 font-mono">v1.0</span>
         </div>
 
         {/* 標題 */}
