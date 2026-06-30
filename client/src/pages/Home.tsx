@@ -179,6 +179,31 @@ export default function Home() {
                 折扣券對比
               </h2>
               <div className="space-y-3">
+                {/* 不使用折扣券選項 */}
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="text-emerald-400 font-semibold">不使用折扣券</div>
+                      <div className="text-gray-400 text-xs">無手續費折扣</div>
+                    </div>
+                    <div className="text-lg font-bold text-gray-400">-</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-gray-500 text-xs">手續費</div>
+                      <div className="text-gray-300">{formatToE(result.originalCommission)}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">折扣後手續費</div>
+                      <div className="text-gray-300">{formatToE(result.originalCommission)}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">最終收入</div>
+                      <div className="text-white font-semibold">{formatToE(result.incomeWithoutCoupon)}</div>
+                    </div>
+                  </div>
+                </div>
+
                 {result.coupons.map((coupon, index) => (
                   <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
@@ -196,8 +221,12 @@ export default function Home() {
                         <div className="text-gray-300">{formatToE(coupon.commissionReduction)}</div>
                       </div>
                       <div>
+                        <div className="text-gray-500 text-xs">折扣後手續費</div>
+                        <div className="text-gray-300">{formatToE(coupon.discountedCommission)}</div>
+                      </div>
+                      <div>
                         <div className="text-gray-500 text-xs">最終收入</div>
-                        <div className="text-gray-300">{formatToE(coupon.finalIncome)}</div>
+                        <div className="text-white font-semibold">{formatToE(coupon.finalIncome)}</div>
                       </div>
                     </div>
                   </div>
