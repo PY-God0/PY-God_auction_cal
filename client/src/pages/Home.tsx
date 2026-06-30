@@ -107,7 +107,7 @@ export default function Home() {
                     <div className="text-gray-500 text-xs">手續費 5%</div>
                   </div>
                 </div>
-                <Switch checked={vipEnabled} onCheckedChange={setVipEnabled} />
+                <Switch checked={vipEnabled} onCheckedChange={setVipEnabled} className="data-[state=checked]:bg-white data-[state=unchecked]:bg-gray-600" />
               </div>
 
               {/* 折扣券價格設置 */}
@@ -146,7 +146,7 @@ export default function Home() {
             {/* 基本計算 */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <span className="text-emerald-400">◻</span>
+                <span className="text-emerald-400">🧮</span>
                 基本計算
               </h2>
               <div className="grid grid-cols-2 gap-4">
@@ -164,7 +164,7 @@ export default function Home() {
             {/* 折扣券對比 */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <span className="text-emerald-400">◻</span>
+                <span className="text-emerald-400">🎁</span>
                 折扣券對比
               </h2>
               <div className="space-y-3">
@@ -224,7 +224,7 @@ export default function Home() {
 
         {/* 底部說明 */}
         <div className="mt-8 text-center text-gray-500 text-xs space-y-1">
-          <p>單位轉換規則：1E = 1 億 | 1kw = 1000 萬 | 1w = 100 萬</p>
+          <p>單位轉換規則：1E = 1 億 | 1kw = 1000 萬 | 1w = 1 萬</p>
           <p>© 2026 PY之神 - Mabi拍賣手續費計算器</p>
         </div>
       </div>
