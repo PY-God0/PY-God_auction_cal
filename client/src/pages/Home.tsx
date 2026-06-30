@@ -1,6 +1,7 @@
 import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { RotateCcw, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,30 +16,31 @@ export default function Home() {
     commissionRate,
     setCommissionRate,
     coupons,
-    updateCouponPrice,
     result,
+    updateCouponPrice,
     resetToDefaults,
   } = useAuctionCalculator();
 
+  const updateSalePrice = (value: number) => setSalePrice(value);
 
+  const [vipEnabled, setVipEnabled] = useState(false);
 
   const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const num = parseFloat(value) || 0;
-    setSalePrice(num);
+    updateSalePrice(num);
   };
 
   const handleCommissionRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
-    setCommissionRate(Math.max(0, Math.min(1, value)));
+    const value = e.target.value;
+    const num = parseFloat(value) || 0;
+    setCommissionRate(num / 100);
   };
 
   const handleCouponPriceChange = (couponId: string, value: string) => {
     const num = parseFloat(value) || 0;
     updateCouponPrice(couponId, num);
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -59,8 +61,6 @@ export default function Home() {
           </div>
         </div>
       </nav>
-
-
 
       {/* 主容器 */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -87,32 +87,29 @@ export default function Home() {
                 <label className="block text-gray-300 text-sm font-medium mb-2">
                   拍出價格 (E)
                 </label>
-                <Input
-                  type="number"
-                  value={salePrice}
-                  onChange={handleSalePriceChange}
-                  step="0.01"
-                  className="w-full bg-gray-800 border-gray-700 text-white"
-                />
-              </div>
-
-              {/* 手續費率輸入 */}
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  VIP 等級
-                </label>
-                <div className="flex items-center gap-2">
+                <div className="relative">
                   <Input
                     type="number"
-                    value={(commissionRate * 100).toFixed(1)}
-                    onChange={handleCommissionRateChange}
-                    step="0.1"
-                    min="0"
-                    max="100"
-                    className="flex-1 bg-gray-800 border-gray-700 text-white"
+                    value={salePrice}
+                    onChange={handleSalePriceChange}
+                    step="0.01"
+                    className="w-full bg-gray-800 border-gray-700 text-white pr-8"
                   />
-                  <span className="text-gray-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">E</span>
                 </div>
+                <div className="text-gray-400 text-xs mt-2">{formatToE(salePrice)}</div>
+              </div>
+
+              {/* VIP 服務 */}
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-400 text-lg">👤</span>
+                  <div>
+                    <div className="text-gray-300 text-sm font-medium">VIP 服務</div>
+                    <div className="text-gray-500 text-xs">手續費 5%</div>
+                  </div>
+                </div>
+                <Switch checked={vipEnabled} onCheckedChange={setVipEnabled} />
               </div>
 
               {/* 折扣券價格設置 */}
@@ -121,19 +118,22 @@ export default function Home() {
                   <span className="text-emerald-400">◻</span>
                   折扣券價格 (kw)
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {coupons.map((coupon) => (
                     <div key={coupon.id}>
-                      <label className="block text-gray-400 text-xs mb-1">
-                        {coupon.name}
+                      <label className="block text-gray-400 text-xs mb-2">
+                        {coupon.name} (手續費優惠 {coupon.name === '30% 折扣券' ? '30%' : coupon.name === '50% 折扣券' ? '50%' : '100%'})
                       </label>
-                      <Input
-                        type="number"
-                        value={coupon.price}
-                        onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
-                        step="0.01"
-                        className="w-full bg-gray-800 border-gray-700 text-white text-sm"
-                      />
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          value={coupon.price}
+                          onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
+                          step="0.01"
+                          className="w-full bg-gray-800 border-gray-700 text-white pr-8"
+                        />
+                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">kw</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -160,17 +160,13 @@ export default function Home() {
                 基本計算
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-800/50 rounded p-4">
-                  <p className="text-gray-400 text-sm mb-1">原始手續費</p>
-                  <p className="text-white text-2xl font-semibold">
-                    {formatToE(result.originalCommission)}
-                  </p>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <div className="text-gray-400 text-sm mb-1">原始手續費</div>
+                  <div className="text-2xl font-bold text-white">{formatToE(result.originalCommission)}</div>
                 </div>
-                <div className="bg-gray-800/50 rounded p-4">
-                  <p className="text-gray-400 text-sm mb-1">不用折扣券收入</p>
-                  <p className="text-white text-2xl font-semibold">
-                    {formatToE(result.incomeWithoutCoupon)}
-                  </p>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <div className="text-gray-400 text-sm mb-1">不用折扣券收入</div>
+                  <div className="text-2xl font-bold text-white">{formatToE(result.incomeWithoutCoupon)}</div>
                 </div>
               </div>
             </div>
@@ -182,42 +178,25 @@ export default function Home() {
                 折扣券對比
               </h2>
               <div className="space-y-3">
-                {result.coupons.map((coupon) => (
-                  <div
-                    key={coupon.couponId}
-                    className="bg-gray-800/50 border border-gray-700 rounded p-4"
-                  >
-                    <div className="flex justify-between items-start mb-3">
+                {result.coupons.map((coupon, index) => (
+                  <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="text-white font-semibold flex items-center gap-2">
-                          <span className="text-emerald-400">◻</span>
-                          {coupon.couponName}
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          券價：{formatToE(coupon.couponPrice)}
-                        </p>
+                        <div className="text-emerald-400 font-semibold">{coupon.couponName}</div>
+                        <div className="text-gray-400 text-xs">券價：{formatToE(coupon.couponPrice)}</div>
                       </div>
-                      <div
-                        className={`text-lg font-semibold ${
-                          coupon.isProfit ? 'text-emerald-400' : 'text-red-400'
-                        }`}
-                      >
-                        {coupon.isProfit ? '+' : ''}
-                        {formatToE(coupon.netProfitLoss)}
+                      <div className={`text-lg font-bold ${coupon.netProfitLoss >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {coupon.netProfitLoss >= 0 ? '+' : ''}{formatToE(coupon.netProfitLoss)}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <p className="text-gray-400">手續費減少</p>
-                        <p className="text-white font-semibold">
-                          {formatToE(coupon.commissionReduction)}
-                        </p>
+                        <div className="text-gray-500 text-xs">手續費減少</div>
+                        <div className="text-gray-300">{formatToE(coupon.commissionReduction)}</div>
                       </div>
                       <div>
-                        <p className="text-gray-400">最終收入</p>
-                        <p className="text-white font-semibold">
-                          {formatToE(coupon.finalIncome)}
-                        </p>
+                        <div className="text-gray-500 text-xs">最終收入</div>
+                        <div className="text-gray-300">{formatToE(coupon.finalIncome)}</div>
                       </div>
                     </div>
                   </div>
@@ -225,37 +204,38 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 最佳策略推薦 */}
-            {result.bestStrategy && (
-              <div className="bg-gray-900 border border-emerald-800/50 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                  <span className="text-emerald-400">⊙</span>
-                  建議下單資訊折扣
-                </h2>
+            {/* 最佳策略 */}
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+                <TrendingUp className="w-5 h-5 text-emerald-400" />
+                最佳策略
+              </h2>
+              {result.bestStrategy && (
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                <div className="text-gray-400 text-sm mb-2">推薦方案</div>
+                <div className="text-emerald-400 font-semibold mb-3">{result.bestStrategy.couponName}</div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-800/50 rounded p-4">
-                    <p className="text-gray-400 text-sm mb-1">最終收入</p>
-                    <p className="text-white text-xl font-semibold">
-                      {formatToE(result.bestStrategy.finalIncome)}
-                    </p>
+                  <div>
+                    <div className="text-gray-500 text-xs">最終收入</div>
+                    <div className="text-white font-semibold">{formatToE(result.bestStrategy.finalIncome)}</div>
                   </div>
-                  <div className="bg-gray-800/50 rounded p-4">
-                    <p className="text-gray-400 text-sm mb-1">購買折扣券</p>
-                    <p className="text-emerald-400 text-xl font-semibold">
-                      {result.bestStrategy.couponName}
-                    </p>
+                  <div>
+                    <div className="text-gray-500 text-xs">淨獲利</div>
+                    <div className={`font-semibold ${result.bestStrategy.netProfitLoss >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {result.bestStrategy.netProfitLoss >= 0 ? '+' : ''}{formatToE(result.bestStrategy.netProfitLoss)}
+                    </div>
                   </div>
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
 
         {/* 底部說明 */}
-        <div className="mt-12 text-center text-gray-500 text-xs space-y-1 border-t border-gray-800 pt-6">
-          <p>根據您的售價和折扣券價格自動計算最優方案</p>
-          <p>單位：1E = 1億 | 1kw = 1000萬 | 1w = 100萬</p>
-          <p className="mt-4">© 2026 PY之神 - Mabi拍賣手續費計算器</p>
+        <div className="mt-8 text-center text-gray-500 text-xs space-y-1">
+          <p>單位轉換規則：1E = 1 億 | 1kw = 1000 萬 | 1w = 100 萬</p>
+          <p>© 2026 PY之神 - Mabi拍賣手續費計算器</p>
         </div>
       </div>
     </div>
