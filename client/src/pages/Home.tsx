@@ -54,11 +54,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* 左側：品牌標識 */}
           <div className="flex items-center gap-4">
-            <img
-              src="/manus-storage/lucky_cat_9ebc78c7.png"
-              alt="PY之神"
-              className="w-20 h-20 object-contain flex-shrink-0"
-            />
+            <div className="w-16 h-16 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
+              <span className="text-3xl">💰</span>
+            </div>
             <div>
               <span className="text-white font-semibold text-2xl">PY之神</span>
               <span className="text-gray-400 text-sm ml-2">v1.0</span>
