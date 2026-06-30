@@ -214,7 +214,7 @@ export default function Home() {
                 <TrendingUp className="w-5 h-5 text-emerald-400" />
                 最佳策略
               </h2>
-              {result.bestStrategy && (
+              {result.bestStrategy ? (
               <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                 <div className="text-gray-400 text-sm mb-2">推薦方案</div>
                 <div className="text-emerald-400 font-semibold mb-3">{result.bestStrategy.couponName}</div>
@@ -231,7 +231,27 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            )}
+              ) : (
+              <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4">
+                <div className="flex gap-3">
+                  <div className="text-blue-400 text-xl flex-shrink-0">ℹ</div>
+                  <div>
+                    <div className="text-blue-400 font-semibold mb-2">建議不購買折扣券</div>
+                    <div className="text-gray-400 text-sm">依目前售價與折扣券價格，購買任何折扣券都無法增加最終收入，最佳方案是不購買折扣券。</div>
+                    <div className="grid grid-cols-2 gap-4 mt-3">
+                      <div>
+                        <div className="text-gray-500 text-xs">直接出售收入</div>
+                        <div className="text-white font-semibold">{formatToE(result.incomeWithoutCoupon)}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500 text-xs">建議</div>
+                        <div className="text-blue-400 font-semibold">不購買折扣券</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              )}
             </div>
           </div>
         </div>
