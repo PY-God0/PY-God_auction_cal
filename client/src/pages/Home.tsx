@@ -1,9 +1,9 @@
-import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 
 /**
  * PY之神 - 拍賣場手續費折扣券計算器
