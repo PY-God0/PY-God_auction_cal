@@ -121,7 +121,7 @@ export default function Home() {
               {/* 折扣券價格設置 */}
               <div>
                 <h3 className="text-gray-300 text-sm font-medium mb-3 flex items-center gap-2">
-                  <span className="text-emerald-400 text-lg">🎫</span>
+                  <span className="text-cyan-400 text-lg">🎫</span>
                   折扣券價格 (kw)
                 </h3>
                 <div className="space-y-3">
@@ -175,7 +175,7 @@ export default function Home() {
             {/* 折扣券對比 */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <span className="text-emerald-400">🎫</span>
+                <span className="text-cyan-400">🎫</span>
                 折扣券對比
               </h2>
               <div className="space-y-3">
@@ -184,7 +184,7 @@ export default function Home() {
                     <div className="flex items-center justify-between mb-3">
                       <div>
                         <div className="text-emerald-400 font-semibold flex items-center gap-2">
-                          <span>🎫</span>
+                          <span className="text-cyan-400">🎫</span>
                           {coupon.couponName}
                         </div>
                         <div className="text-gray-400 text-xs mt-1">券價：{formatToE(coupon.couponPrice)}</div>
