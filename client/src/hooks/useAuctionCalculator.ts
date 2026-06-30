@@ -1,0 +1,157 @@
+import { useState, useCallback, useMemo } from 'react';
+
+export interface CouponOption {
+  id: string;
+  name: string;
+  discountRate: number; // 0-1 之間的折扣率
+  price: number;
+}
+
+export interface CalculationResult {
+  salePrice: number;
+  commissionRate: number;
+  originalCommission: number;
+  incomeWithoutCoupon: number;
+  coupons: CouponResult[];
+  bestStrategy: CouponResult | null;
+}
+
+export interface CouponResult {
+  couponId: string;
+  couponName: string;
+  couponPrice: number;
+  commissionReduction: number;
+  discountedCommission: number;
+  finalIncome: number;
+  netProfitLoss: number;
+  isProfit: boolean;
+}
+
+const DEFAULT_COUPONS: CouponOption[] = [
+  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 16900000 },
+  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 24950000 },
+  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 55000000 },
+];
+
+export function useAuctionCalculator() {
+  const [salePrice, setSalePrice] = useState<number>(1355000000);
+  const [commissionRate, setCommissionRate] = useState<number>(0.04);
+  const [coupons, setCoupons] = useState<CouponOption[]>(DEFAULT_COUPONS);
+
+  const calculate = useCallback((): CalculationResult => {
+    const originalCommission = salePrice * commissionRate;
+    const incomeWithoutCoupon = salePrice - originalCommission;
+
+    const couponResults: CouponResult[] = coupons.map((coupon) => {
+      const commissionReduction = originalCommission * coupon.discountRate;
+      const discountedCommission = originalCommission - commissionReduction;
+      const finalIncome = salePrice - discountedCommission - coupon.price;
+      const netProfitLoss = commissionReduction - coupon.price;
+      const isProfit = netProfitLoss >= 0;
+
+      return {
+        couponId: coupon.id,
+        couponName: coupon.name,
+        couponPrice: coupon.price,
+        commissionReduction,
+        discountedCommission,
+        finalIncome,
+        netProfitLoss,
+        isProfit,
+      };
+    });
+
+    // 找出最佳策略：最終收入最高的方案
+    let bestStrategy: CouponResult | null = null;
+    let maxIncome = incomeWithoutCoupon;
+
+    couponResults.forEach((result) => {
+      if (result.finalIncome > maxIncome) {
+        maxIncome = result.finalIncome;
+        bestStrategy = result;
+      }
+    });
+
+    return {
+      salePrice,
+      commissionRate,
+      originalCommission,
+      incomeWithoutCoupon,
+      coupons: couponResults,
+      bestStrategy,
+    };
+  }, [salePrice, commissionRate, coupons]);
+
+  const result = useMemo(() => calculate(), [calculate]);
+
+  const updateCouponPrice = useCallback(
+    (couponId: string, newPrice: number) => {
+      setCoupons((prev) =>
+        prev.map((coupon) =>
+          coupon.id === couponId ? { ...coupon, price: newPrice } : coupon
+        )
+      );
+    },
+    []
+  );
+
+  const updateCouponDiscountRate = useCallback(
+    (couponId: string, newRate: number) => {
+      setCoupons((prev) =>
+        prev.map((coupon) =>
+          coupon.id === couponId ? { ...coupon, discountRate: newRate } : coupon
+        )
+      );
+    },
+    []
+  );
+
+  const resetToDefaults = useCallback(() => {
+    setSalePrice(1355000000);
+    setCommissionRate(0.04);
+    setCoupons(DEFAULT_COUPONS);
+  }, []);
+
+  return {
+    salePrice,
+    setSalePrice,
+    commissionRate,
+    setCommissionRate,
+    coupons,
+    updateCouponPrice,
+    updateCouponDiscountRate,
+    result,
+    resetToDefaults,
+  };
+}
+
+/**
+ * 格式化大數字為可讀的字符串
+ * 例如：1355000000 → "1,355,000,000"
+ */
+export function formatNumber(num: number): string {
+  return num.toLocaleString('zh-TW');
+}
+
+/**
+ * 格式化為萬元單位
+ * 例如：1355000000 → "13,550 萬"
+ */
+export function formatToWan(num: number): string {
+  const wan = Math.floor(num / 10000);
+  const remainder = num % 10000;
+  if (remainder === 0) {
+    return `${formatNumber(wan)} 萬`;
+  }
+  return `${formatNumber(wan)}.${String(remainder).padStart(4, '0')} 萬`;
+}
+
+/**
+ * 簡化顯示：如果是整數萬，只顯示萬數；否則顯示完整數字
+ */
+export function formatCompact(num: number): string {
+  if (num % 10000 === 0) {
+    return formatToWan(num);
+  }
+  return formatNumber(num);
+}
