@@ -179,39 +179,17 @@ export default function Home() {
                 折扣券對比
               </h2>
               <div className="space-y-3">
-                {/* 不使用折扣券選項 */}
-                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="text-emerald-400 font-semibold">不使用折扣券</div>
-                      <div className="text-gray-400 text-xs">無手續費折扣</div>
-                    </div>
-                    <div className="text-lg font-bold text-gray-400">-</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <div className="text-gray-500 text-xs">手續費</div>
-                      <div className="text-gray-300">{formatToE(result.originalCommission)}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-500 text-xs">折扣後手續費</div>
-                      <div className="text-gray-300">{formatToE(result.originalCommission)}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-500 text-xs">最終收入</div>
-                      <div className="text-white font-semibold">{formatToE(result.incomeWithoutCoupon)}</div>
-                    </div>
-                  </div>
-                </div>
-
                 {result.coupons.map((coupon, index) => (
                   <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-emerald-400 font-semibold">{coupon.couponName}</div>
-                        <div className="text-gray-400 text-xs">券價：{formatToE(coupon.couponPrice)}</div>
+                        <div className="text-emerald-400 font-semibold flex items-center gap-2">
+                          <span>🎫</span>
+                          {coupon.couponName}
+                        </div>
+                        <div className="text-gray-400 text-xs mt-1">券價：{formatToE(coupon.couponPrice)}</div>
                       </div>
-                      <div className={`text-lg font-bold ${coupon.netProfitLoss >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <div className={`text-lg font-bold px-3 py-1 rounded border ${coupon.netProfitLoss >= 0 ? 'border-emerald-400/30 text-emerald-400' : 'border-red-400/30 text-red-400'}`}>
                         {coupon.netProfitLoss >= 0 ? '+' : ''}{formatToE(coupon.netProfitLoss)}
                       </div>
                     </div>
@@ -219,10 +197,6 @@ export default function Home() {
                       <div>
                         <div className="text-gray-500 text-xs">手續費減少</div>
                         <div className="text-gray-300">{formatToE(coupon.commissionReduction)}</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-xs">折扣後手續費</div>
-                        <div className="text-gray-300">{formatToE(coupon.discountedCommission)}</div>
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">最終收入</div>
