@@ -114,7 +114,7 @@ export default function Home() {
               <div>
                 <h3 className="text-gray-300 text-sm font-medium mb-3 flex items-center gap-2">
                   <span className="text-emerald-400">◻</span>
-                  折扣券價格 (kw)
+                  折扣券價格 (E)
                 </h3>
                 <div className="space-y-3">
                   {coupons.map((coupon) => (
@@ -128,9 +128,10 @@ export default function Home() {
                           value={coupon.price}
                           onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
                           step="0.01"
+                          onWheel={(e) => e.currentTarget.blur()}
                           className="w-full bg-gray-800 border-gray-700 text-white pr-8"
                         />
-                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">kw</span>
+                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">E</span>
                       </div>
                     </div>
                   ))}
@@ -146,7 +147,7 @@ export default function Home() {
             {/* 基本計算 */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <span className="text-emerald-400">🧮</span>
+                <span className="text-emerald-400">⌨️</span>
                 基本計算
               </h2>
               <div className="grid grid-cols-2 gap-4">
@@ -164,7 +165,7 @@ export default function Home() {
             {/* 折扣券對比 */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <span className="text-emerald-400">🎁</span>
+                <span className="text-emerald-400">🎫</span>
                 折扣券對比
               </h2>
               <div className="space-y-3">
