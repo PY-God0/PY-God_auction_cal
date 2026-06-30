@@ -52,9 +52,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* 左側：品牌標識 */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-cyan-500 rounded-md flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm">P</span>
-            </div>
+            <img
+              src="/manus-storage/lucky_cat_9ebc78c7.png"
+              alt="PY之神"
+              className="w-10 h-10 object-contain flex-shrink-0"
+            />
             <div>
               <span className="text-white font-semibold text-sm">PY之神</span>
               <span className="text-gray-400 text-xs ml-2">v1.0</span>
