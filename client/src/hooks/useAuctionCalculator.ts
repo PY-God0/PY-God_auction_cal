@@ -28,9 +28,9 @@ export interface CouponResult {
 }
 
 const DEFAULT_COUPONS: CouponOption[] = [
-  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 0.17 },
-  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 0.25 },
-  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 0.57 },
+  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 0.169 },
+  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 0.26 },
+  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 0.599 },
 ];
 
 export function useAuctionCalculator() {
