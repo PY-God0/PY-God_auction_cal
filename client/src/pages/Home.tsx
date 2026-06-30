@@ -1,7 +1,7 @@
 import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RotateCcw, TrendingUp, Settings, Moon, Sun, BookmarkPlus, Copy, Check } from 'lucide-react';
+import { RotateCcw, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 /**
@@ -20,8 +20,7 @@ export default function Home() {
     resetToDefaults,
   } = useAuctionCalculator();
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+
 
   const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -39,11 +38,7 @@ export default function Home() {
     updateCouponPrice(couponId, num);
   };
 
-  const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -51,40 +46,21 @@ export default function Home() {
       <nav className="border-b border-gray-800 bg-gray-900/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* 左側：品牌標識 */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <img
               src="/manus-storage/lucky_cat_9ebc78c7.png"
               alt="PY之神"
-              className="w-10 h-10 object-contain flex-shrink-0"
+              className="w-20 h-20 object-contain flex-shrink-0"
             />
             <div>
-              <span className="text-white font-semibold text-sm">PY之神</span>
-              <span className="text-gray-400 text-xs ml-2">v1.0</span>
+              <span className="text-white font-semibold text-2xl">PY之神</span>
+              <span className="text-gray-400 text-sm ml-2">v1.0</span>
             </div>
-          </div>
-
-          {/* 右側：功能按鈕 */}
-          <div className="flex items-center gap-4">
-            <button className="text-gray-400 hover:text-white transition-colors">
-              <Settings className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
           </div>
         </div>
       </nav>
 
-      {/* 綠色提示條 */}
-      <div className="bg-emerald-900/30 border-b border-emerald-800/50 px-6 py-3">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 text-emerald-300 text-sm">
-          <BookmarkPlus className="w-4 h-4" />
-          <span>收藏最佳折扣方案</span>
-        </div>
-      </div>
+
 
       {/* 主容器 */}
       <div className="max-w-7xl mx-auto px-6 py-8">
