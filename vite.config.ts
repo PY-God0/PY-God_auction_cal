@@ -206,7 +206,7 @@ function vitePluginStorageProxy(): Plugin {
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
 
 export default defineConfig({
-  base: process.env.GITHUB_ACTIONS ? '/mabi-auction-calculator/' : '/',
+  base: process.env.GITHUB_ACTIONS ? '/PY-God_auction_cal/' : '/',
   plugins,
   resolve: {
     alias: {
