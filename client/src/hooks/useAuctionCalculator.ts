@@ -171,8 +171,9 @@ export function formatToE(numInKw: number): string {
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}kw`;
   } else {
-    formatted = numInKw.toFixed(2);
-    formatted = formatted.replace(/\.?0+$/, '');
+    // numInKw < 1 時，轉換為 w（kw × 10 = w）
+    const numInW = numInKw * 10;
+    formatted = numInW.toFixed(0);
     return `${formatted}w`;
   }
 }
