@@ -121,7 +121,7 @@ export default function Home() {
               {/* 折扣券價格設置 */}
               <div>
                 <h3 className="text-gray-300 text-sm font-medium mb-3 flex items-center gap-2">
-                  <span className="text-emerald-400">◻</span>
+                  <span className="text-emerald-400 text-lg">🎫</span>
                   折扣券價格 (kw)
                 </h3>
                 <div className="space-y-3">
@@ -133,14 +133,13 @@ export default function Home() {
                         {coupon.id === 'coupon100' && '100% 折扣券（手續費全免）'}
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-400 text-lg">🎫</span>
                         <Input
                           type="number"
                           value={coupon.price}
                           onChange={(e) => handleCouponPriceChange(coupon.id, e.target.value)}
                           step="0.01"
                           onWheel={(e) => e.currentTarget.blur()}
-                          className="w-full bg-gray-800 border-gray-700 text-white pl-10 pr-8"
+                          className="w-full bg-gray-800 border-gray-700 text-white pr-8"
                         />
                         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">kw</span>
                       </div>
