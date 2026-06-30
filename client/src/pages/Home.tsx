@@ -42,7 +42,7 @@ export default function Home() {
         {/* 標題 */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">拍賣場手續費計算器</h1>
-          <p className="text-white/60">優化您的折扣券使用策略，最大化收益（單位：億 E）</p>
+          <p className="text-white/60">優化您的折扣券使用策略，最大化收益</p>
         </div>
 
         {/* 主容器 */}
@@ -260,7 +260,7 @@ export default function Home() {
         {/* 底部說明 */}
         <div className="text-center mt-8 text-white/40 text-sm">
           <p>根據您的售價和折扣券價格自動計算最優方案</p>
-          <p className="mt-1">單位說明：1E = 1億 = 100,000,000</p>
+          <p className="mt-1">單位：1E = 1億 | 1kw = 1000萬 | 1w = 100萬</p>
         </div>
       </div>
     </div>

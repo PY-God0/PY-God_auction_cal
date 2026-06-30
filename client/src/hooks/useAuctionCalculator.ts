@@ -141,11 +141,20 @@ export function useAuctionCalculator() {
 }
 
 /**
- * 格式化為了元單位 (E)
- * 例如：45 → "45.00E"
+ * 格式化為多層級單位 (E/kw/w)
+ * 1E = 100,000,000
+ * 1kw = 10,000,000
+ * 1w = 1,000,000
+ * 例如：45 → "45.00E", 0.55 → "5.50kw", 0.0094 → "94.00w"
  */
 export function formatToE(num: number): string {
-  return `${num.toFixed(2)}E`;
+  if (num >= 1) {
+    return `${num.toFixed(2)}E`;
+  } else if (num >= 0.1) {
+    return `${(num * 10).toFixed(2)}kw`;
+  } else {
+    return `${(num * 100).toFixed(2)}w`;
+  }
 }
 
 /**
