@@ -163,17 +163,23 @@ export function formatToE(numInKw: number): string {
   const numInE = numInKw / 10;
   
   if (numInE >= 1) {
-    formatted = numInE.toFixed(2);
+    // 計算時使用 3 位小數精度，顯示時只顯示 2 位小數
+    const rounded = Math.round(numInE * 100) / 100;
+    formatted = rounded.toFixed(2);
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}E`;
   } else if (numInKw >= 1) {
-    formatted = numInKw.toFixed(2);
+    // 計算時使用 3 位小數精度，顯示時只顯示 2 位小數
+    const rounded = Math.round(numInKw * 100) / 100;
+    formatted = rounded.toFixed(2);
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}kw`;
   } else {
     // numInKw < 1 時，轉換為 w（kw × 1000 = w）
+    // 計算時使用 3 位小數精度，顯示時四捨五入到整數
     const numInW = numInKw * 1000;
-    formatted = numInW.toFixed(0);
+    const rounded = Math.round(numInW);
+    formatted = rounded.toString();
     return `${formatted}w`;
   }
 }
