@@ -4,7 +4,7 @@ export interface CouponOption {
   id: string;
   name: string;
   discountRate: number; // 0-1 之間的折扣率
-  price: number; // 以億為單位
+  price: number; // 以 kw 為單位（UI 輸入單位）
 }
 
 export interface CalculationResult {
@@ -28,14 +28,14 @@ export interface CouponResult {
 }
 
 const DEFAULT_COUPONS: CouponOption[] = [
-  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 0.171 },
-  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 0.26 },
-  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 0.599 },
+  { id: 'coupon30', name: '30% 折扣券', discountRate: 0.3, price: 1.71 }, // 1.71kw = 0.171E
+  { id: 'coupon50', name: '50% 折扣券', discountRate: 0.5, price: 2.6 }, // 2.6kw = 0.26E
+  { id: 'coupon100', name: '100% 折扣券', discountRate: 1, price: 5.99 }, // 5.99kw = 0.599E
 ];
 
 export function useAuctionCalculator() {
   const [salePrice, setSalePrice] = useState<number>(45);
-  const [commissionRate, setCommissionRate] = useState<number>(0.04);
+  const [commissionRate, setCommissionRate] = useState<number>(0.05); // 預設非 VIP (5%)
   const [coupons, setCoupons] = useState<CouponOption[]>(DEFAULT_COUPONS);
 
   const calculate = useCallback((): CalculationResult => {
@@ -48,18 +48,21 @@ export function useAuctionCalculator() {
       let finalIncome: number;
       let netProfitLoss: number;
 
+      // 將折扣券價格從 kw 轉換為 E（kw ÷ 10 = E）
+      const couponPriceInE = coupon.price / 10;
+
       if (coupon.discountRate === 1) {
         // 100% 折扣券：直接免除所有手續費
         commissionReduction = originalCommission;
         discountedCommission = 0;
-        finalIncome = salePrice - coupon.price;
-        netProfitLoss = originalCommission - coupon.price;
+        finalIncome = salePrice - couponPriceInE;
+        netProfitLoss = originalCommission - couponPriceInE;
       } else {
         // 30% 和 50% 折扣券
         commissionReduction = originalCommission * coupon.discountRate;
         discountedCommission = originalCommission * (1 - coupon.discountRate);
-        finalIncome = salePrice - discountedCommission - coupon.price;
-        netProfitLoss = commissionReduction - coupon.price;
+        finalIncome = salePrice - discountedCommission - couponPriceInE;
+        netProfitLoss = commissionReduction - couponPriceInE;
       }
 
       const isProfit = netProfitLoss >= 0;
@@ -67,7 +70,7 @@ export function useAuctionCalculator() {
       return {
         couponId: coupon.id,
         couponName: coupon.name,
-        couponPrice: coupon.price,
+        couponPrice: couponPriceInE, // 存儲轉換後的 E 單位
         commissionReduction,
         discountedCommission,
         finalIncome,

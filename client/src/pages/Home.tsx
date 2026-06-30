@@ -43,7 +43,9 @@ export default function Home() {
 
   const handleCouponPriceChange = (couponId: string, value: string) => {
     const num = parseFloat(value) || 0;
-    updateCouponPrice(couponId, num);
+    // 用戶輸入的是 kw 單位，需要轉換為 E 單位（kw ÷ 10 = E）
+    const priceInE = num / 10;
+    updateCouponPrice(couponId, priceInE);
   };
 
   return (
