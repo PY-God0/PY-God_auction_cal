@@ -84,7 +84,7 @@ export default function Home() {
               {/* 售價輸入 */}
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">
-                  拍出價格 (E)
+                  售出價格 (E)
                 </label>
                 <div className="relative">
                   <Input
@@ -96,13 +96,12 @@ export default function Home() {
                   />
                   <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">E</span>
                 </div>
-                <div className="text-gray-400 text-xs mt-2">{formatToE(salePrice)}</div>
               </div>
 
               {/* VIP 服務 */}
               <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 text-lg">👑</span>
+                  <span className="text-emerald-400 text-lg">♔</span>
                   <div>
                     <div className="text-gray-300 text-sm font-medium">VIP 服務</div>
                     <div className="text-gray-500 text-xs">手續費 5%</div>
@@ -121,7 +120,7 @@ export default function Home() {
                   {coupons.map((coupon) => (
                     <div key={coupon.id}>
                       <label className="block text-gray-400 text-xs mb-2">
-                        {coupon.name} (手續費優惠 {coupon.name === '30% 折扣券' ? '30%' : coupon.name === '50% 折扣券' ? '50%' : '100%'})
+                        {coupon.name}={formatToE(coupon.price)}
                       </label>
                       <div className="relative">
                         <Input
