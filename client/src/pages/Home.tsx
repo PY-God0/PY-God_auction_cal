@@ -4,6 +4,7 @@ import { Switch } from '@/components/ui/switch';
 import { TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useAuctionCalculator, formatToE } from '@/hooks/useAuctionCalculator';
+import { LOGO_BASE64 } from '@/assets/logo';
 
 /**
  * PY之神 - 拍賣場手續費折扣券計算器
@@ -54,8 +55,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* 左側：品牌標識 */}
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
-              <span className="text-3xl">💰</span>
+            <div className="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden shadow-lg">
+              <img src={LOGO_BASE64} alt="PY之神" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="text-white font-semibold text-2xl">PY之神</span>
