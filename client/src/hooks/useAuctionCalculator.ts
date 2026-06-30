@@ -152,9 +152,9 @@ export function useAuctionCalculator() {
  * 格式化為多層級單位 (E/kw/w)
  * 輸入單位是 kw
  * 1E = 10kw
- * 1kw = 10w
+ * 1kw = 1000w
  * 小數點後全為 0 則不顯示
- * 例如：450kw → "450kw", 45kw → "4.5E", 4.5kw → "4.5kw", 0.45kw → "4.5w"
+ * 例如：450kw → "450kw", 45kw → "4.5E", 4.5kw → "4.5kw", 0.0045kw → "4.5w"
  */
 export function formatToE(numInKw: number): string {
   let formatted: string;
@@ -171,8 +171,8 @@ export function formatToE(numInKw: number): string {
     formatted = formatted.replace(/\.?0+$/, '');
     return `${formatted}kw`;
   } else {
-    // numInKw < 1 時，轉換為 w（kw × 10 = w）
-    const numInW = numInKw * 10;
+    // numInKw < 1 時，轉換為 w（kw × 1000 = w）
+    const numInW = numInKw * 1000;
     formatted = numInW.toFixed(0);
     return `${formatted}w`;
   }
